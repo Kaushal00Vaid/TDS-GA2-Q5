@@ -1,12 +1,20 @@
 import json
+from collections import defaultdict
 
 with open("products.json") as f:
     data = json.load(f)
 
-sports_products = [p for p in data["products"] if p["category"] == "sports"]
+# group stats per category
+stats = defaultdict(lambda: {"count": 0, "inventoryValue": 0.0})
 
-count = len(sports_products)
-inventory_value = sum(p["price"] * p["stock"] for p in sports_products)
+for p in data["products"]:
+    cat = p["category"]
+    stats[cat]["count"] += 1
+    stats[cat]["inventoryValue"] += p["price"] * p["stock"]
 
-print(f"Sports count: {count}")
-print(f"Sports inventoryValue: {inventory_value:.2f}")
+# pretty print results
+for category, info in stats.items():
+    print(f"Category: {category}")
+    print(f"  count: {info['count']}")
+    print(f"  inventoryValue: {info['inventoryValue']:.2f}")
+    print()
